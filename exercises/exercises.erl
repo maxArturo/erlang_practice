@@ -8,7 +8,8 @@
          convert/1,
          min/1,
          max/1,
-         min_max/1
+         min_max/1,
+         swedish_date/0
         ]).
 %%
 %% Simple sequential programs
@@ -88,4 +89,12 @@ min_max_helper([H|T], Min, Max) ->
 
 min_max_helper([], Min, Max) ->
   {Min, Max}.
+
+% 4. Write the function time:swedish_date() which returns a string containing the date in swedish YYMMDD format.
+%
+
+swedish_date() ->
+  Format = fun(Num) -> string:right(integer_to_list(Num), 2, $0) end,
+  
+  Measures = lists:flatmap(Format, tuple_to_list(date())),
 
