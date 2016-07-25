@@ -96,5 +96,10 @@ min_max_helper([], Min, Max) ->
 swedish_date() ->
   Format = fun(Num) -> string:right(integer_to_list(Num), 2, $0) end,
   
-  Measures = lists:flatmap(Format, tuple_to_list(date())),
+  lists:flatmap(Format, tuple_to_list(date())).
+
+% Interaction between processes, Concurrency
+% 
+% 1. Write a function which starts 2 processes, and sends a message M times forewards and backwards between them. After the messages have been sent the processes should terminate gracefully.
+
 
