@@ -23,8 +23,7 @@ check_sudoku(Board) ->
   ),
   check_rows(Board, NumberSet),
   check_rows(transpose(Board), NumberSet),
-  Smalls = get_small_boards(Board),
-  check_rows(Smalls, NumberSet),
+  check_small_boards(Board, NumberSet),
   ok.
 
 check_rows([], _) -> ok;
@@ -37,18 +36,24 @@ check_rows([Row|T], Set) ->
 number_diff(Row, Set) ->
   Row_set = sets:from_list(Row),
   sets:is_subset(Row_set, Set)
-  andalso sets:is_subset(Set, Row_set).
+    andalso sets:is_subset(Set, Row_set).
 
 transpose([[]|_]) -> [];
 transpose(Matrix) ->
   [lists:map(fun hd/1, Matrix) | transpose(lists:map(fun tl/1, Matrix))].
 
-get_small_boards(Board) ->
-  SmallBoards = split_by_rows(Board),
-  lists:map(fun(L) -> 
-                lists:map(fun lists:flatten/1, L) 
-            end, SmallBoards).
-  
+check_small_boards(Board, Set) ->
+  SmallBoards = lists:flatten(split_by_rows(Board)),
+  check_single_board(SmallBoards, trunc(math:sqrt(length(SmallBoards))), Set).
+
+check_single_board([], _, _) -> ok;
+check_single_board(Board, Size, Set) ->
+  {First, Rest} = lists:split(Size, Board),
+  case number_diff(First, Set) of
+    true -> check_single_board(Rest, Size, Set);
+    _ -> throw(not_valid)
+  end.
+
 split_sub_board(Board) ->
   lists:split(
     length(hd(Board)), 
